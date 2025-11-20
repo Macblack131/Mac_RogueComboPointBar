@@ -1,0 +1,8 @@
+## Interface: 120000
+## Title: Mac_RogueComboPointBar
+## Author: Mac
+## Version: 0.0.0
+## SavedVariables: Mac_RogueComboPointBarDB
+
+main.lua
+Mac_RogueComboPointBar.xml

@@ -1,0 +1,42 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2а01/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+UI_shared.xsd">
+
+    <Script file="Mac_RogueComboPointBar.lua" />
+    <Script file="Mac_RogueComboPoint.lua" />
+
+    <Frame name="Mac_RogueComboPointTemplate" drawLayer="BORDER" mixin="Mac_RogueComboPointMixin" virtual="true">
+        <Size x="40" y="20" />
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="1">
+                <Texture parentKey="Background">
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="Fill">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="2" y="-2"/>
+                        <Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>        
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <Frame name="Mac_RogueComboPointBarFrame" inherits="HorizontalLayoutFrame" mixin="Mac_RogueComboPointBarFrameMixin" parent="UIParent">
+        <Anchors>
+            <Anchor point="CENTER" x="0" y="0" />
+        </Anchors>
+        <KeyValues>
+            <KeyValue key="spacing" value="2" type="number"/>
+            <KeyValue key="fixedHeight" value="32" type="number"/>
+            </KeyValues>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+            <OnEvent method="OnEvent"/>
+        </Scripts>
+    </Frame>
+
+</Ui>
