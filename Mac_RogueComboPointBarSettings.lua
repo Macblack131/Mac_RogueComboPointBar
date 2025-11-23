@@ -30,6 +30,10 @@ local function ComboPointsToChangeColorChanged(setting, value)
     Mac_RogueComboPointBarFrame:UpdateRogueComboPoint()
 end
 
+local function resetSettings(setting, value)
+    Mac_RogueComboPointBarFrame:ResetPosition()
+end
+
 local function createCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, callback)
     local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), label, defaultValue)
     Settings.CreateCheckbox(category, setting, tooltip)
@@ -229,6 +233,17 @@ local function CreateSettings()
         local maxValue = 7
         local step = 1
         createSlider(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, minValue, maxValue, step, ComboPointsToChangeColorChanged)
+    end
+
+    do 
+        local name = "resetSettings"
+        local variable = "resetSettings"
+        local variableKey = "resetSettings"
+        local variableTbl = Mac_RogueComboPointBarDB
+        local defaultValue = false
+
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), name, defaultValue)
+        setting:SetValueChangedCallback(resetSettings)
     end
 
     Settings.RegisterAddOnCategory(category)

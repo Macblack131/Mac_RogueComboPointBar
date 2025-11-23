@@ -1,7 +1,7 @@
 ## Interface: 120000
 ## Title: Mac_RogueComboPointBar
 ## Author: Mac
-## Version: 0.0.0
+## Version: 0.0.1
 ## SavedVariables: Mac_RogueComboPointBarDB
 
 Mac_RogueComboPointBarSettings.lua
