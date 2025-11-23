@@ -28,60 +28,88 @@ end
 
 Mac_RogueComboPointBarFrameMixin = {}
 
+function Mac_RogueComboPointBarFrameMixin:CreateRogueComboPoint()
+    local unit = "player"
+    local powerType = 4
+    self.maxComboPoints = getUnitPowerMax(unit, powerType)
+    self.RogueComboPointPool = self.RogueComboPointPool or {}
+    for i = #self.RogueComboPointPool + 1, self.maxComboPoints do
+        self.RogueComboPointPool[i] = CreateFrame("Frame", nil, self, "Mac_RogueComboPointTemplate")
+        self.RogueComboPointPool[i].layoutIndex = i
+    end
+    self:Layout()
+end
+
 function Mac_RogueComboPointBarFrameMixin:OnLoad()
     self:SetMovable(true)
-    self:SetScript("OnMouseDown", function(self, button)
+    self:SetScript("OnMouseDown", function(self)
         if Mac_RogueComboPointBarDB.isLock ~= true then
         self:StartMoving()
         end
     end)
-    self:SetScript("OnMouseUp", function(self, button)
+    self:SetScript("OnMouseUp", function(self)
         self:StopMovingOrSizing()
         self:SetUserPlaced(true)
     end)
 
     self:RegisterEvent("UNIT_POWER_UPDATE")
-    self.RogueComboPointPool = CreateFramePool("Frame", self, "Mac_RogueComboPointTemplate")
-    local unit = "player"
-    local powerType = 4
-    local currentComboPoints = getUnitPower(unit, powerType)
-    local maxComboPoints = getUnitPowerMax(unit, powerType)
-    self:Update(currentComboPoints, maxComboPoints)
+    self:CreateRogueComboPoint()
+    self:UpdateSpacing()
+    self:UpdateRogueComboPoint()
 end
 
 function Mac_RogueComboPointBarFrameMixin:OnEvent(event, ...)
     if event == "UNIT_POWER_UPDATE" then
-        local unit = "player"
-        local powerType = 4
-        local currentComboPoints = getUnitPower(unit, powerType)
-        local maxComboPoints = getUnitPowerMax(unit, powerType)
-        self:Update(currentComboPoints, maxComboPoints)
+        self:UpdateRogueComboPoint()
     end
 end
 
-function Mac_RogueComboPointBarFrameMixin:Update(currentComboPoints, maxComboPoints)
-    self.RogueComboPointPool:ReleaseAll()
-    for i = 1, maxComboPoints do
-        local rogueComboPoint = self.RogueComboPointPool:Acquire()
-        rogueComboPoint.layoutIndex = i
-        rogueComboPoint:Show()
-        rogueComboPoint.Fill:Show()
-        if i > currentComboPoints then
-            rogueComboPoint.Fill:Hide()
-        end
-        if Mac_RogueComboPointBarDB then
-            if Mac_RogueComboPointBarDB.comboPointsToChangeColor then
-                if currentComboPoints >= Mac_RogueComboPointBarDB.comboPointsToChangeColor then
-                    rogueComboPoint.Fill:SetColorTexture(0.012, 0.8, 0.004)
-                else
-                    rogueComboPoint.Fill:SetColorTexture(0.776, 0.604, 0)
-                end
-            end
-        else
-            rogueComboPoint.Fill:SetColorTexture(0.776, 0.604, 0)
-        end
+function Mac_RogueComboPointBarFrameMixin:UpdateSpacing()
+    self.spacing = Mac_RogueComboPointBarDB.spacing
+    self:Layout()
+end
+
+function Mac_RogueComboPointBarFrameMixin:UpdateRogueComboPointSize()
+    local rogueComboPointPool = self.RogueComboPointPool
+    for i = 1, #rogueComboPointPool do
+        local rogueComboPoint = rogueComboPointPool[i]
+        rogueComboPoint:UpdateSize()
     end
     self:Layout()
+end
+
+function Mac_RogueComboPointBarFrameMixin:UpdateRogueComboPointBorder()
+    local rogueComboPointPool = self.RogueComboPointPool
+    for i = 1, #rogueComboPointPool do
+        local rogueComboPoint = rogueComboPointPool[i]
+        rogueComboPoint:UpdateBorder()
+    end
+    self:Layout()
+end
+
+function Mac_RogueComboPointBarFrameMixin:UpdateRogueComboPoint()
+    local unit = "player"
+    local powerType = 4
+    local currentComboPoints = getUnitPower(unit, powerType)
+    local maxComboPoints = getUnitPowerMax(unit, powerType)
+    if maxComboPoints ~= self.maxComboPoints then
+        self:CreateRogueComboPoint()
+    end
+    local rogueComboPointPool = self.RogueComboPointPool
+
+    local color = Mac_RogueComboPointBarDB.color
+    local backgroundColor = Mac_RogueComboPointBarDB.backgroundColor
+    local changedColor = Mac_RogueComboPointBarDB.changedColor
+    for i = 1, #rogueComboPointPool do
+        local rogueComboPoint = rogueComboPointPool[i]
+        if i > currentComboPoints then
+            rogueComboPoint.Texture:SetColorTexture(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a)
+        elseif currentComboPoints >= Mac_RogueComboPointBarDB.comboPointsToChangeColor and Mac_RogueComboPointBarDB.chouldChangeColor == true then
+            rogueComboPoint.Texture:SetColorTexture(changedColor.r, changedColor.g, changedColor.b, changedColor.a)
+        else
+            rogueComboPoint.Texture:SetColorTexture(color.r, color.g, color.b, color.a)
+        end
+    end
 end
 
 function Mac_RogueComboPointBarFrameMixin:ResetPosition()

@@ -4,5 +4,6 @@
 ## Version: 0.0.0
 ## SavedVariables: Mac_RogueComboPointBarDB
 
-main.lua
+Mac_RogueComboPointBarSettings.lua
 Mac_RogueComboPointBar.xml
+Mac_RogueComboPointBarSettings.xml

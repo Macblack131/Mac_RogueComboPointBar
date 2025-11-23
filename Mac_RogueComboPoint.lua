@@ -1,37 +1,67 @@
 Mac_RogueComboPointMixin = {}
 
 function Mac_RogueComboPointMixin:OnLoad()
-    self.Background:SetTexture("Interface/TargetingFrame/UI-StatusBar")
-    self.Background:SetColorTexture(0, 0, 0, 0.25)
-    self.Fill:SetTexture("Interface/TargetingFrame/UI-StatusBar")
-    self.Fill:SetColorTexture(0.776, 0.604, 0)
+    self.Texture:SetTexture("Interface/TargetingFrame/UI-StatusBar")
+    self:UpdateSize()
+    self:UpdateBorder()
+end
 
-    local borderFrame = CreateFrame("Frame", "Border", self)
-    borderFrame:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
-    borderFrame:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
-    borderFrame:SetFrameLevel(self:GetFrameLevel() + 1) -- Above the main frame
+function Mac_RogueComboPointMixin:UpdateSize()
+    self:SetSize(Mac_RogueComboPointBarDB.width, Mac_RogueComboPointBarDB.height)
+end
+
+function Mac_RogueComboPointMixin:UpdateBorderSize()
+    local borderSize = Mac_RogueComboPointBarDB.borderSize
+
+    self.BorderLeft:SetWidth(borderSize)
+    self.BorderRight:SetWidth(borderSize)
+    self.BorderTop:SetHeight(borderSize)
+    self.BorderBottom:SetHeight(borderSize)
     
-    local borderTop = borderFrame:CreateTexture("borderTop", "OVERLAY")
-    borderTop:SetPoint("TOPLEFT", borderFrame, "TOPLEFT", 0, 0)
-    borderTop:SetPoint("TOPRIGHT", borderFrame, "TOPRIGHT", 0, 0)
-    borderTop:SetHeight(2)
-    borderTop:SetColorTexture(0, 0, 0, 0.5)
-    
-    local borderBottom = borderFrame:CreateTexture(nil, "OVERLAY")
-    borderBottom:SetPoint("BOTTOMLEFT", borderFrame, "BOTTOMLEFT", 0, 0)
-    borderBottom:SetPoint("BOTTOMRIGHT", borderFrame, "BOTTOMRIGHT", 0, 0)
-    borderBottom:SetHeight(2)
-    borderBottom:SetColorTexture(0, 0, 0, 0.5)
-    
-    local borderLeft = borderFrame:CreateTexture(nil, "OVERLAY")
-    borderLeft:SetPoint("TOPLEFT", borderFrame, "TOPLEFT", 0, 0)
-    borderLeft:SetPoint("BOTTOMLEFT", borderFrame, "BOTTOMLEFT", 0, 0)
-    borderLeft:SetWidth(2)
-    borderLeft:SetColorTexture(0, 0, 0, 0.5)
-    
-    local borderRight = borderFrame:CreateTexture(nil, "OVERLAY")
-    borderRight:SetPoint("TOPRIGHT", borderFrame, "TOPRIGHT", 0, 0)
-    borderRight:SetPoint("BOTTOMRIGHT", borderFrame, "BOTTOMRIGHT", 0, 0)
-    borderRight:SetWidth(2)
-    borderRight:SetColorTexture(0, 0, 0, 0.5)
+    self.BorderTop:SetPoint("TOPLEFT", 0, borderSize)
+    self.BorderTop:SetPoint("TOPRIGHT", borderSize, 0)
+
+    self.BorderRight:SetPoint("TOPRIGHT", borderSize, 0)
+    self.BorderRight:SetPoint("BOTTOMRIGHT", 0, -borderSize)
+
+    self.BorderBottom:SetPoint("BOTTOMLEFT", -borderSize, -borderSize)
+    self.BorderBottom:SetPoint("BOTTOMRIGHT", 0, 0)
+
+    self.BorderLeft:SetPoint("TOPLEFT", -borderSize, borderSize)
+    self.BorderLeft:SetPoint("BOTTOMLEFT", 0, 0)
+
+end
+
+function Mac_RogueComboPointMixin:UpdateBordeColor()
+    local colorData = Mac_RogueComboPointBarDB.borderColor
+    local r, g, b, a = colorData.r, colorData.g, colorData.b, colorData.a
+
+    self.BorderTop:SetColorTexture(r, g, b, a)
+    self.BorderRight:SetColorTexture(r, g, b, a)
+    self.BorderBottom:SetColorTexture(r, g, b, a)
+    self.BorderLeft:SetColorTexture(r, g, b, a)
+end
+
+function Mac_RogueComboPointMixin:ShowBorder()
+    self.BorderTop:Show()
+    self.BorderRight:Show()
+    self.BorderBottom:Show()
+    self.BorderLeft:Show()
+end
+
+function Mac_RogueComboPointMixin:HideBorder()
+    self.BorderTop:Hide()
+    self.BorderRight:Hide()
+    self.BorderBottom:Hide()
+    self.BorderLeft:Hide()
+end
+
+function Mac_RogueComboPointMixin:UpdateBorder()
+    if Mac_RogueComboPointBarDB.showBorder == false then
+        self:HideBorder()
+        return
+    end
+    self:ShowBorder()
+    self:UpdateBorderSize()
+    self:UpdateBordeColor()
 end

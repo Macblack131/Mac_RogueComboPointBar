@@ -1,0 +1,34 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2а01/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+UI_shared.xsd">
+
+    <Frame name="Mac_SettingsColorControlTemplate" inherits="SettingsListElementTemplate" mixin="Mac_SettingsColorControlMixin" virtual="true">
+        <Size x="280" y="26"/>
+        <Frames>
+            <Button parentKey="ColorSwatch" inherits="ColorSwatchTemplate" scale="1.5">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Text" relativePoint="TOPLEFT" x="135" y="3"/>
+                </Anchors>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <Frame name="Mac_SettingsHeaderTemplate" mixin="Mac_SettingsHeaderMixin" virtual="true">
+        <Size y="45"/>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Title" inherits="GameFontHighlightLarge" justifyH="LEFT" justifyV="TOP">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="7" y="-16"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+</Ui>
