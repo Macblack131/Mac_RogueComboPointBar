@@ -3,17 +3,15 @@ local function getValueFromSecretValue(secretValue)
         print("Uncorrect value")
         return nil
     end
-
     local value = 0
     for i = 1, secretValue do
         value = value + 1
     end
-
     return value
 end
 
 local function getUnitPowerMax(unit, powerType)
-    local secretValue = UnitPowerMax(unit, 4)
+    local secretValue = UnitPowerMax(unit, powerType)
     local UnitPowerMax = getValueFromSecretValue(secretValue)
     
     return UnitPowerMax
@@ -24,6 +22,17 @@ local function getUnitPower(unit, powerType)
     local UnitPower = getValueFromSecretValue(secretValue)
     
     return UnitPower
+end
+
+local function HandleMouseUp(self)
+    self:StopMovingOrSizing()
+    self:SetUserPlaced(true)
+end
+
+local function HandleMouseDown(self)
+    if Mac_RogueComboPointBarDB.isLock ~= true then
+        self:StartMoving()
+    end
 end
 
 Mac_RogueComboPointBarFrameMixin = {}
@@ -40,19 +49,28 @@ function Mac_RogueComboPointBarFrameMixin:CreateRogueComboPoint()
     self:Layout()
 end
 
+function Mac_RogueComboPointBarFrameMixin:UpdateRogueComboPointVisibility()
+    local unit = "player"
+    local powerType = 4
+    local maxComboPoints = getUnitPowerMax(unit, powerType)
+    local rogueComboPointPool = self.RogueComboPointPool
+
+    for i = 1, #rogueComboPointPool do
+        if i  > maxComboPoints then
+            rogueComboPointPool[i]:Hide()
+        else
+            rogueComboPointPool[i]:Show()
+        end
+    end
+    self:Layout()
+end
+
 function Mac_RogueComboPointBarFrameMixin:OnLoad()
     self:SetMovable(true)
-    self:SetScript("OnMouseDown", function(self)
-        if Mac_RogueComboPointBarDB.isLock ~= true then
-        self:StartMoving()
-        end
-    end)
-    self:SetScript("OnMouseUp", function(self)
-        self:StopMovingOrSizing()
-        self:SetUserPlaced(true)
-    end)
-
+    self:SetScript("OnMouseUp", HandleMouseUp)
+    self:SetScript("OnMouseDown", HandleMouseDown)
     self:RegisterEvent("UNIT_POWER_UPDATE")
+    self:RegisterEvent("UNIT_MAXPOWER")
     self:CreateRogueComboPoint()
     self:UpdateSpacing()
     self:UpdateRogueComboPoint()
@@ -60,7 +78,19 @@ end
 
 function Mac_RogueComboPointBarFrameMixin:OnEvent(event, ...)
     if event == "UNIT_POWER_UPDATE" then
-        self:UpdateRogueComboPoint()
+        local unitTarget, powerType = ...
+        if unitTarget == "player" and powerType == "COMBO_POINTS" then
+            self:UpdateRogueComboPoint()
+        end
+    end
+
+    if event == "UNIT_MAXPOWER" then
+        local unitTarget, powerType = ...
+        if unitTarget == "player" and powerType == "COMBO_POINTS" then
+            self:CreateRogueComboPoint()
+            self:UpdateRogueComboPointVisibility()
+            self:UpdateRogueComboPoint()
+        end
     end
 end
 
@@ -91,10 +121,6 @@ function Mac_RogueComboPointBarFrameMixin:UpdateRogueComboPoint()
     local unit = "player"
     local powerType = 4
     local currentComboPoints = getUnitPower(unit, powerType)
-    local maxComboPoints = getUnitPowerMax(unit, powerType)
-    if maxComboPoints ~= self.maxComboPoints then
-        self:CreateRogueComboPoint()
-    end
     local rogueComboPointPool = self.RogueComboPointPool
 
     local color = Mac_RogueComboPointBarDB.color
