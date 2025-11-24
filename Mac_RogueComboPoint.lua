@@ -1,7 +1,6 @@
 Mac_RogueComboPointMixin = {}
 
 function Mac_RogueComboPointMixin:OnLoad()
-    self.Texture:SetTexture("Interface/TargetingFrame/UI-StatusBar")
     self:UpdateSize()
     self:UpdateBorder()
 end
