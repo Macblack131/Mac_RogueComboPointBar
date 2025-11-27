@@ -7,3 +7,5 @@
 Mac_RogueComboPointBarSettings.lua
 Mac_RogueComboPointBar.xml
 Mac_RogueComboPointBarSettings.xml
+Mac_MinimalSlider.xml
+Mac_SettingControls.xml

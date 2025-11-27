@@ -1,40 +1,20 @@
-local function showBorderChanged(setting, value)
-    Mac_RogueComboPointBarFrame:UpdateRogueComboPointBorder()
+local function AddInitializerToLayout(category, initializer)
+	local layout = SettingsPanel:GetLayout(category)
+	layout:AddInitializer(initializer)
 end
 
-local function BorderSizeChanged(setting, value)
-    Mac_RogueComboPointBarFrame:UpdateRogueComboPointBorder()
+local function CreateSliderInitializer(setting, options, tooltip)
+	assert((setting:GetVariableType() == "number") and (options ~= nil))
+	return Settings.CreateControlInitializer("Mac_SettingsSliderControlTemplate", setting, options, tooltip)
 end
 
-local function borderColorChanged(setting, value)
-    Mac_RogueComboPointBarFrame:UpdateRogueComboPointBorder()
+local function CreateSlider(category, setting, options, tooltip)
+	local initializer = CreateSliderInitializer(setting, options, tooltip)
+	AddInitializerToLayout(category, initializer)
+	return initializer;
 end
 
-local function colorChanged(setting, value)
-    Mac_RogueComboPointBarFrame:UpdateRogueComboPoint()
-end
-
-local function heightChanged(setting, value)
-    Mac_RogueComboPointBarFrame:UpdateRogueComboPointSize()
-end
-
-local function widthChanged(setting, value)
-    Mac_RogueComboPointBarFrame:UpdateRogueComboPointSize()
-end
-
-local function spacingChanged()
-    Mac_RogueComboPointBarFrame:UpdateSpacing()
-end
-
-local function ComboPointsToChangeColorChanged(setting, value)
-    Mac_RogueComboPointBarFrame:UpdateRogueComboPoint()
-end
-
-local function resetSettings(setting, value)
-    Mac_RogueComboPointBarFrame:ResetPosition()
-end
-
-local function createCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, callback)
+local function CreateCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, callback)
     local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), label, defaultValue)
     Settings.CreateCheckbox(category, setting, tooltip)
     if callback then
@@ -42,7 +22,7 @@ local function createCheckBox(category, variable, variableKey, variableTbl, labe
     end
 end
 
-local function createColorPicker(category, layout, variable, variableKey, variableTbl, label, defaultValue, tooltip, callback)
+local function CreateColorPicker(category, layout, variable, variableKey, variableTbl, label, defaultValue, tooltip, callback)
     local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), label, defaultValue)
     local data = Settings.CreateSettingInitializerData(setting, nil, tooltip)
     local initializer = Settings.CreateSettingInitializer('Mac_SettingsColorControlTemplate', data)
@@ -52,18 +32,7 @@ local function createColorPicker(category, layout, variable, variableKey, variab
     end
 end
 
-local function createSlider(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, minValue, maxValue, step, callback)
-
-    local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), label, defaultValue)
-    local options = Settings.CreateSliderOptions(minValue, maxValue, step)
-    options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function(value) return string.format("%.1f", value)end)
-    Settings.CreateSlider(category, setting, options, tooltip)
-    if callback then
-        setting:SetValueChangedCallback(callback)
-    end
-end
-
-local function createHeader(layout, text, tooltip, indent)
+local function CreateHeader(layout, text, tooltip, indent)
         local data = { name = text, tooltip = tooltip, indent = indent or 0 };
         local initializer = Settings.CreateElementInitializer("Mac_SettingsHeaderTemplate", data);
 
@@ -83,10 +52,10 @@ local function CreateSettings()
         local label = "Lock position"
         local defaultValue = false
         local tooltip = nil
-       createCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip) 
+        CreateCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip) 
     end
 
-    createHeader(layout, "Combo point frame", nil, 0)
+    CreateHeader(layout, "Combo point frame", nil, 0)
 
     do
         local label = "Color"
@@ -100,7 +69,11 @@ local function CreateSettings()
         }
         local variable ="color"
 
-        createColorPicker(category, layout, variable, variableKey, variableTbl, label, defaultValue, tooltip, colorChanged)
+        local function OnValueChanged()
+            Mac_RogueComboPointBarFrame:UpdateRogueComboPoint()
+        end
+
+        CreateColorPicker(category, layout, variable, variableKey, variableTbl, label, defaultValue, tooltip, OnValueChanged)
     end
 
     do
@@ -115,49 +88,80 @@ local function CreateSettings()
         }
         local variable ="backgroundColor"
 
-        createColorPicker(category, layout, variable, variableKey, variableTbl, label, defaultValue, tooltip, colorChanged)
+        local function OnValueChanged()
+            Mac_RogueComboPointBarFrame:UpdateRogueComboPoint()
+        end
+
+        CreateColorPicker(category, layout, variable, variableKey, variableTbl, label, defaultValue, tooltip, OnValueChanged)
     end
 
     do
-        local variable = "height"
-        local variableKey = "height"
-        local  variableTbl = Mac_RogueComboPointBarDB
-        local label = "Height"
         local defaultValue = 20
-        local tooltip = nil
-        local minValue = 10
-        local maxValue = 50
-        local step = 0.1
-        createSlider(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, minValue, maxValue, step, heightChanged)
+        local variableKey = "height"
+        local label = "Height"
+
+		local function GetValue()
+			return Mac_RogueComboPointBarDB.height or defaultValue
+		end
+
+		local function SetValue(value)
+			Mac_RogueComboPointBarDB.height = value
+            Mac_RogueComboPointBarFrame:UpdateRogueComboPointSize()
+		end
+
+		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
+
+        local minValue, maxValue, step = 10, 50, 0.1
+        local options = Settings.CreateSliderOptions(minValue, maxValue, step)
+		local tooltip = nil
+		CreateSlider(category, setting, options, tooltip)
     end
 
     do
-        local variable = "width"
-        local variableKey = "width"
-        local  variableTbl = Mac_RogueComboPointBarDB
-        local label = "Width"
         local defaultValue = 40
-        local tooltip = nil
-        local minValue = 10
-        local maxValue = 100
-        local step = 0.1
-        createSlider(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, minValue, maxValue, step, widthChanged)
+        local variableKey = "width"
+        local label = "Width"
+
+		local function GetValue()
+			return Mac_RogueComboPointBarDB.width or defaultValue
+		end
+
+		local function SetValue(value)
+			Mac_RogueComboPointBarDB.width = value
+            Mac_RogueComboPointBarFrame:UpdateRogueComboPointSize()
+		end
+
+		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
+
+        local minValue, maxValue, step = 10, 100, 0.1
+        local options = Settings.CreateSliderOptions(minValue, maxValue, step)
+		local tooltip = nil
+		CreateSlider(category, setting, options, tooltip)
     end
 
-        do
-        local variable = "spacing"
-        local variableKey = "spacing"
-        local  variableTbl = Mac_RogueComboPointBarDB
-        local label = "Spacing"
+    do
         local defaultValue = 4
-        local tooltip = nil
-        local minValue = 0
-        local maxValue = 30
-        local step = 0.1
-        createSlider(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, minValue, maxValue, step, spacingChanged)
+        local variableKey = "spacing"
+        local label = "Spacing"
+
+		local function GetValue()
+			return Mac_RogueComboPointBarDB.spacing or defaultValue
+		end
+
+		local function SetValue(value)
+			Mac_RogueComboPointBarDB.spacing = value
+            Mac_RogueComboPointBarFrame:UpdateSpacing()
+		end
+
+		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
+
+        local minValue, maxValue, step = 0, 30, 0.1
+        local options = Settings.CreateSliderOptions(minValue, maxValue, step)
+		local tooltip = nil
+		CreateSlider(category, setting, options, tooltip)
     end
 
-    createHeader(layout, "Border", nil, 0)
+    CreateHeader(layout, "Border", nil, 0)
 
     do
         local variable ="showBorder"
@@ -165,7 +169,12 @@ local function CreateSettings()
         local label = "Show border"
         local defaultValue = true
         local tooltip = nil
-       createCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, showBorderChanged) 
+
+        local function OnValueChanged()
+		    Mac_RogueComboPointBarFrame:UpdateRogueComboPointBorder()
+	    end
+
+       CreateCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, OnValueChanged) 
     end
 
     do
@@ -180,23 +189,36 @@ local function CreateSettings()
         }
         local variable ="borderColor"
 
-        createColorPicker(category, layout, variable, variableKey, variableTbl, label, defaultValue, tooltip, borderColorChanged)
+        local function OnValueChanged()
+            Mac_RogueComboPointBarFrame:UpdateRogueComboPointBorder()
+        end
+
+        CreateColorPicker(category, layout, variable, variableKey, variableTbl, label, defaultValue, tooltip, OnValueChanged)
     end
 
     do
-        local variable = "borderSize"
-        local variableKey = "borderSize"
-        local  variableTbl = Mac_RogueComboPointBarDB
-        local label = "Border size"
         local defaultValue = 1
-        local tooltip = nil
-        local minValue = 1
-        local maxValue = 10
-        local step = 0.1
-        createSlider(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, minValue, maxValue, step, BorderSizeChanged)
+        local variableKey = "borderSize"
+        local label = "Border size"
+
+		local function GetValue()
+			return Mac_RogueComboPointBarDB.borderSize or defaultValue
+		end
+
+		local function SetValue(value)
+			Mac_RogueComboPointBarDB.borderSize = value
+            Mac_RogueComboPointBarFrame:UpdateRogueComboPointBorder()
+		end
+
+		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
+
+        local minValue, maxValue, step = 1, 10, 0.1
+        local options = Settings.CreateSliderOptions(minValue, maxValue, step)
+		local tooltip = nil
+		CreateSlider(category, setting, options, tooltip)
     end
 
-    createHeader(layout, "Change color", nil, 0)
+    CreateHeader(layout, "Change color", nil, 0)
 
     do
         local variable ="chouldChangeColor"
@@ -204,7 +226,12 @@ local function CreateSettings()
         local label = "Change combo points if combo points are greater than a specific value"
         local defaultValue = true
         local tooltip = nil
-       createCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, colorChanged) 
+
+        local function OnValueChanged()
+            Mac_RogueComboPointBarFrame:UpdateRogueComboPointBorder()
+        end
+        
+        CreateCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, OnValueChanged) 
     end
 
     do
@@ -219,20 +246,33 @@ local function CreateSettings()
         }
         local variable ="changedColor"
 
-        createColorPicker(category, layout, variable, variableKey, variableTbl, label, defaultValue, tooltip, colorChanged)
+        local function OnValueChanged()
+            Mac_RogueComboPointBarFrame:UpdateRogueComboPointBorder()
+        end
+
+        CreateColorPicker(category, layout, variable, variableKey, variableTbl, label, defaultValue, tooltip, OnValueChanged)
     end
 
     do
-        local variable = "comboPointsToChangeColor"
-        local variableKey = "comboPointsToChangeColor"
-        local  variableTbl = Mac_RogueComboPointBarDB
-        local label = "Combo points to change color"
         local defaultValue = 5
-        local tooltip = nil
-        local minValue = 2
-        local maxValue = 7
-        local step = 1
-        createSlider(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, minValue, maxValue, step, ComboPointsToChangeColorChanged)
+        local variableKey = "comboPointsToChangeColor"
+        local label = "Combo points to change color"
+
+		local function GetValue()
+			return Mac_RogueComboPointBarDB.comboPointsToChangeColor or defaultValue
+		end
+
+		local function SetValue(value)
+			Mac_RogueComboPointBarDB.comboPointsToChangeColor = value
+            Mac_RogueComboPointBarFrame:UpdateRogueComboPoint()
+		end
+
+		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
+
+        local minValue, maxValue, step = 2, 7, 1
+        local options = Settings.CreateSliderOptions(minValue, maxValue, step)
+		local tooltip = nil
+		CreateSlider(category, setting, options, tooltip)
     end
 
     do 
@@ -243,6 +283,11 @@ local function CreateSettings()
         local defaultValue = false
 
         local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), name, defaultValue)
+
+        local function resetSettings()
+            Mac_RogueComboPointBarFrame:ResetPosition()
+        end
+
         setting:SetValueChangedCallback(resetSettings)
     end
 

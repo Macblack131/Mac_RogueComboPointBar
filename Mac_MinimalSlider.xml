@@ -1,0 +1,50 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2а01/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+UI_shared.xsd">
+
+    <Script file="Mac_MinimalSlider.lua"/>
+
+    <Frame name="Mac_MinimalSliderWithImputBoxTemplate" mixin="Mac_MinimalSliderWithInputBoxMixin" enableMouse="true" virtual="true">
+		<Size x="250" y="40"/>
+		<Frames>
+			<Slider parentKey="Slider" inherits="MinimalSliderTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="19"/>
+					<Anchor point="BOTTOMRIGHT" x="-19"/>
+				</Anchors>
+			</Slider>
+			<Button parentKey="Back">
+				<Size x="11" y="19"/>
+				<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.Slider" relativePoint="LEFT" x="-4"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture atlas="Minimal_SliderBar_Button_Left" useAtlasSize="true"/>
+					</Layer>
+				</Layers>
+			</Button>
+			<Button parentKey="Forward">
+				<Size x="9" y="18"/>
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.Slider" relativePoint="RIGHT" x="4"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture atlas="Minimal_SliderBar_Button_Right" useAtlasSize="true"/>
+					</Layer>
+				</Layers>
+			</Button>
+            <EditBox parentKey="EditBox" letters="4" countInvisibleLetters="true" inherits="InputBoxTemplate" autoFocus="false">
+				<Size x="50" y="20"/>
+				<Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Slider" relativePoint="RIGHT" x="25" y="0"/>
+                </Anchors>
+			</EditBox>
+		</Frames>
+		<Scripts>
+			<OnLoad method="OnLoad"/>
+		</Scripts>
+	</Frame>
+
+
+</Ui>
