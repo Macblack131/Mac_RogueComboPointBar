@@ -390,6 +390,11 @@ end
 
 local function Init()
     Mac_RogueComboPointBarDB = Mac_RogueComboPointBarDB or DEFAULT_SETTINGS
+    for k, v in pairs(DEFAULT_SETTINGS) do
+        if Mac_RogueComboPointBarDB[k] == nil then
+            Mac_RogueComboPointBarDB[k] = v
+        end
+    end
     CreateSettings()
     CreateFrame("Frame", "Mac_RogueComboPointBarFrame", UIParent, "Mac_RogueComboPointBarFrameTemplate")
 end
