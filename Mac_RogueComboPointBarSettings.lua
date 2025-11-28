@@ -1,3 +1,12 @@
+local function CreateSliderOptions(minValue, maxValue, step, buttonStep)
+	local options = {}
+	options.minValue = minValue or 0;
+	options.maxValue = maxValue or 1;
+	options.steps = (step and (maxValue - minValue) / step) or 100;
+    options.buttonStep = buttonStep or 0.1
+	return options;
+end
+
 local function AddInitializerToLayout(category, initializer)
 	local layout = SettingsPanel:GetLayout(category)
 	layout:AddInitializer(initializer)
@@ -58,6 +67,74 @@ local function CreateSettings()
     CreateHeader(layout, "Combo point frame", nil, 0)
 
     do
+        local defaultValue = 0
+        local variableKey = "positionX"
+        local label = "Position X"
+
+		local function GetValue()
+            return Mac_RogueComboPointBarDB.xOffset or defaultValue
+		end
+
+		local function SetValue(value)
+            Mac_RogueComboPointBarDB.xOffset = value
+            Mac_RogueComboPointBarFrame:UpdatePosition()
+		end
+
+		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
+
+        local minValue, maxValue, step, buttonStep = -1920, 1920, 0.1, 10
+        local options = CreateSliderOptions(minValue, maxValue, step, buttonStep)
+		local tooltip = nil
+		CreateSlider(category, setting, options, tooltip)
+    end
+
+    do
+        local defaultValue = 0
+        local variableKey = "positionY"
+        local label = "Position Y"
+
+		local function GetValue()
+            return Mac_RogueComboPointBarDB.yOffset or defaultValue
+		end
+
+		local function SetValue(value)
+            Mac_RogueComboPointBarDB.yOffset = value
+            Mac_RogueComboPointBarFrame:UpdatePosition()
+		end
+
+		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
+
+        local minValue, maxValue, step, buttonStep = -1080, 1080, 0.1, 10
+        local options = CreateSliderOptions(minValue, maxValue, step, buttonStep)
+		local tooltip = nil
+		CreateSlider(category, setting, options, tooltip)
+    end
+
+    do
+        local defaultValue = 4
+        local variableKey = "spacing"
+        local label = "Spacing"
+
+		local function GetValue()
+			return Mac_RogueComboPointBarDB.spacing or defaultValue
+		end
+
+		local function SetValue(value)
+			Mac_RogueComboPointBarDB.spacing = value
+            Mac_RogueComboPointBarFrame:UpdateSpacing()
+		end
+
+		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
+
+        local minValue, maxValue, step, buttonStep = 0, 30, 0.1, 10
+        local options = CreateSliderOptions(minValue, maxValue, step, buttonStep)
+		local tooltip = nil
+		CreateSlider(category, setting, options, tooltip)
+    end
+
+    CreateHeader(layout, "Combo point", nil, 0)
+
+    do
         local label = "Color"
         local tooltip = nil
         local variableKey = "color"
@@ -111,8 +188,8 @@ local function CreateSettings()
 
 		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
 
-        local minValue, maxValue, step = 10, 50, 0.1
-        local options = Settings.CreateSliderOptions(minValue, maxValue, step)
+        local minValue, maxValue, step, buttonStep = 1, 1080, 0.1, 1
+        local options = CreateSliderOptions(minValue, maxValue, step, buttonStep)
 		local tooltip = nil
 		CreateSlider(category, setting, options, tooltip)
     end
@@ -133,30 +210,8 @@ local function CreateSettings()
 
 		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
 
-        local minValue, maxValue, step = 10, 100, 0.1
-        local options = Settings.CreateSliderOptions(minValue, maxValue, step)
-		local tooltip = nil
-		CreateSlider(category, setting, options, tooltip)
-    end
-
-    do
-        local defaultValue = 4
-        local variableKey = "spacing"
-        local label = "Spacing"
-
-		local function GetValue()
-			return Mac_RogueComboPointBarDB.spacing or defaultValue
-		end
-
-		local function SetValue(value)
-			Mac_RogueComboPointBarDB.spacing = value
-            Mac_RogueComboPointBarFrame:UpdateSpacing()
-		end
-
-		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
-
-        local minValue, maxValue, step = 0, 30, 0.1
-        local options = Settings.CreateSliderOptions(minValue, maxValue, step)
+        local minValue, maxValue, step, buttonStep = 1, 1920, 0.1, 1
+        local options = CreateSliderOptions(minValue, maxValue, step, buttonStep)
 		local tooltip = nil
 		CreateSlider(category, setting, options, tooltip)
     end
@@ -212,8 +267,8 @@ local function CreateSettings()
 
 		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
 
-        local minValue, maxValue, step = 1, 10, 0.1
-        local options = Settings.CreateSliderOptions(minValue, maxValue, step)
+        local minValue, maxValue, step, buttonStep = 1, 32, 0.1, 1
+        local options = CreateSliderOptions(minValue, maxValue, step, buttonStep)
 		local tooltip = nil
 		CreateSlider(category, setting, options, tooltip)
     end
@@ -269,8 +324,8 @@ local function CreateSettings()
 
 		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
 
-        local minValue, maxValue, step = 2, 7, 1
-        local options = Settings.CreateSliderOptions(minValue, maxValue, step)
+        local minValue, maxValue, step, buttonStep = 2, 7, 1, 1
+        local options = CreateSliderOptions(minValue, maxValue, step, buttonStep)
 		local tooltip = nil
 		CreateSlider(category, setting, options, tooltip)
     end

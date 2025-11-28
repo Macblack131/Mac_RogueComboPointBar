@@ -57,7 +57,7 @@ end
 
 function Mac_MinimalSliderWithInputBoxMixin:OnStepperClicked(forward)
 	local value = self.Slider:GetValue();
-	local step = self.Slider:GetValueStep();
+	local step = self.Slider.buttonStep
 	if forward then
 		self.Slider:SetValue(value + step);
 	else
@@ -67,34 +67,29 @@ function Mac_MinimalSliderWithInputBoxMixin:OnStepperClicked(forward)
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 end
 
-function Mac_MinimalSliderWithInputBoxMixin:Init(value, minValue, maxValue, steps)
+function Mac_MinimalSliderWithInputBoxMixin:Init(value, minValue, maxValue, steps, buttonStep)
 	self.Slider:SetMinMaxValues(minValue, maxValue)
 	self.Slider:SetValueStep((maxValue - minValue) / steps)
-	self.Slider:SetValue(value);
+	self.Slider:SetValue(value)
+	self.Slider.buttonStep = buttonStep or 1
 
-    self.EditBox:SetJustifyH("CENTER");
-    self.EditBox:SetText(value)
+    self.EditBox:SetJustifyH("CENTER")
+    self.EditBox:SetText(math.floor(value * 10 + 0.5) / 10)
+	self.EditBox.currentValue = math.floor(value * 10 + 0.5) / 10
 
 	local function OnValueChanged(slider, value)
-        self.EditBox:SetText(value)
-        self.EditBox.currentValue = value
+        self.EditBox:SetText(math.floor(value * 10 + 0.5) / 10)
+        self.EditBox.currentValue = math.floor(value * 10 + 0.5) / 10
 
 		self:TriggerEvent(Mac_MinimalSliderWithInputBoxMixin.Event.OnValueChanged, value);
 	end
 	self.Slider:SetScript("OnValueChanged", OnValueChanged);
-
     local function OnEnterPressed()
         local value = tonumber(self.EditBox:GetText())
 			if value == nil then
 				return
 			else
-                if value < minValue then
-                    OnValueChanged(nil , minValue)
-                elseif  value > maxValue then
-                    OnValueChanged(nil , maxValue)
-                else
-                    OnValueChanged(nil ,value)
-                end 
+                OnValueChanged(nil , math.floor(value * 10 + 0.5) / 10)
 			end
         self.EditBox:ClearFocus()
     end
@@ -103,7 +98,6 @@ function Mac_MinimalSliderWithInputBoxMixin:Init(value, minValue, maxValue, step
 
     local function OnEditFocusGained()
         self.EditBox:HighlightText(0,0)
-	    self.EditBox:SetCursorPosition(self.EditBox:GetNumLetters())
     end
 
     self.EditBox:SetScript("OnEditFocusGained", OnEditFocusGained)
@@ -148,7 +142,7 @@ function Mac_MinimalSliderWithInputBoxMixin:SetEnabled(enabled)
 end
 
 function Mac_MinimalSliderWithInputBoxMixin:SetValue(value)
-	self.Slider:SetValue(value);
+	self.Slider:SetValue(value)
 end
 
 function Mac_MinimalSliderWithInputBoxMixin:Release()

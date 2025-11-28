@@ -1,6 +1,5 @@
 local function getValueFromSecretValue(secretValue)
     if type(secretValue) ~= "number" then
-        print("Uncorrect value")
         return nil
     end
     local value = 0
@@ -26,16 +25,31 @@ end
 
 local function HandleMouseUp(self)
     self:StopMovingOrSizing()
-    self:SetUserPlaced(true)
+    self:SetMovable(false)
+
+    local xOffset, yOffset = self:GetCenter()
+    Settings.SetValue("positionX", xOffset - (GetScreenWidth() / 2))
+    Settings.SetValue("positionY", yOffset - (GetScreenHeight() / 2))
+
 end
 
 local function HandleMouseDown(self)
     if Mac_RogueComboPointBarDB.isLock ~= true then
+        self:SetMovable(true)
         self:StartMoving()
     end
 end
 
 Mac_RogueComboPointBarFrameMixin = {}
+
+function Mac_RogueComboPointBarFrameMixin:UpdatePosition()
+    self:ClearAllPoints()
+
+    local xOffset = Mac_RogueComboPointBarDB.xOffset
+    local yOffset = Mac_RogueComboPointBarDB.yOffset
+
+    self:SetPoint("CENTER", UIParent, "CENTER", xOffset, yOffset)
+end
 
 function Mac_RogueComboPointBarFrameMixin:CreateRogueComboPoint()
     local unit = "player"
@@ -66,7 +80,7 @@ function Mac_RogueComboPointBarFrameMixin:UpdateRogueComboPointVisibility()
 end
 
 function Mac_RogueComboPointBarFrameMixin:OnLoad()
-    self:SetMovable(true)
+    self:UpdatePosition()
     self:SetScript("OnMouseUp", HandleMouseUp)
     self:SetScript("OnMouseDown", HandleMouseDown)
     self:RegisterEvent("UNIT_POWER_UPDATE")

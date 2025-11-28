@@ -57,7 +57,6 @@ UI_shared.xsd">
         </Anchors>
         <KeyValues>
             <KeyValue key="spacing" value="30" type="number"/>
-            <KeyValue key="fixedHeight" value="32" type="number"/>
             </KeyValues>
         <Scripts>
             <OnLoad method="OnLoad"/>

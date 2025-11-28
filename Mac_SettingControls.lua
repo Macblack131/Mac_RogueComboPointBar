@@ -21,11 +21,11 @@ function Mac_SettingsSliderControlMixin:Init(initializer)
 
 	local setting = self:GetSetting();
 	local options = initializer:GetOptions();
-	self.SliderWithInput:Init(setting:GetValue(), options.minValue, options.maxValue, options.steps);
+	self.SliderWithInput:Init(setting:GetValue(), options.minValue, options.maxValue, options.steps, options.buttonStep);
 
 	self.SliderWithInput.Slider:SetTooltipFunc(GenerateClosure(InitializeSettingTooltip, initializer));
 
-	self.cbrHandles:RegisterCallback(self.SliderWithInput, MinimalSliderWithSteppersMixin.Event.OnValueChanged, self.OnSliderValueChanged, self);
+	self.cbrHandles:RegisterCallback(self.SliderWithInput, Mac_MinimalSliderWithInputBoxMixin.Event.OnValueChanged, self.OnSliderValueChanged, self);
 
 	self:EvaluateState();
 end

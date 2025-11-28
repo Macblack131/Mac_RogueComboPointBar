@@ -34,7 +34,7 @@ UI_shared.xsd">
 					</Layer>
 				</Layers>
 			</Button>
-            <EditBox parentKey="EditBox" letters="4" countInvisibleLetters="true" inherits="InputBoxTemplate" autoFocus="false">
+            <EditBox parentKey="EditBox" letters="5" inherits="InputBoxTemplate" autoFocus="false">
 				<Size x="50" y="20"/>
 				<Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.Slider" relativePoint="RIGHT" x="25" y="0"/>
