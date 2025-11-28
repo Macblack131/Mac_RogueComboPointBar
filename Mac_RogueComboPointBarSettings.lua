@@ -1,3 +1,42 @@
+local DEFAULT_SETTINGS = {
+    isLock = false,
+    color = {
+        r = 0.776,
+        g = 0.604,
+        b = 0,
+        a = 1,
+    },
+    resetSettings = false,
+    yOffset = 0,
+    spacing = 4,
+    showBorder = true,
+    backgroundColor = {
+        r = 0,
+        g = 0,
+        b = 0,
+        a = 0.25
+    },
+    changedColor = {
+        r = 0.012,
+        g = 0.8,
+        b = 0.004,
+        a = 1,
+    },
+    width = 40,
+    borderColor = {
+        r = 0,
+        g = 0,
+        b = 0,
+        a = 1,
+    },
+    borderSize = 1,
+    height = 20,
+    comboPointsToChangeColor = 5,
+    chouldChangeColor = true,
+    xOffset = 0,
+}
+
+
 local function CreateSliderOptions(minValue, maxValue, step, buttonStep)
 	local options = {}
 	options.minValue = minValue or 0;
@@ -350,7 +389,7 @@ local function CreateSettings()
 end
 
 local function Init()
-    Mac_RogueComboPointBarDB = Mac_RogueComboPointBarDB or {}
+    Mac_RogueComboPointBarDB = Mac_RogueComboPointBarDB or DEFAULT_SETTINGS
     CreateSettings()
     CreateFrame("Frame", "Mac_RogueComboPointBarFrame", UIParent, "Mac_RogueComboPointBarFrameTemplate")
 end
