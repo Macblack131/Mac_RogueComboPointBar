@@ -1,5 +1,6 @@
 local DEFAULT_SETTINGS = {
     isLock = false,
+    hideOutOfCombat = false,
     color = {
         r = 0.776,
         g = 0.604,
@@ -101,6 +102,20 @@ local function CreateSettings()
         local defaultValue = false
         local tooltip = nil
         CreateCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip) 
+    end
+
+    do
+        local variable = "hideOutOfCombat"
+        local variableKey = "hideOutOfCombat"
+        local label = "Hide out of combat"
+        local defaultValue = false
+        local tooltip = nil
+
+        local function OnValueChanged()
+            Mac_RogueComboPointBarFrame:UpdateRogueComboPointVisibility()
+        end
+
+        CreateCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, OnValueChanged) 
     end
 
     CreateHeader(layout, "Combo point frame", nil, 0)

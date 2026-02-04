@@ -68,9 +68,11 @@ function Mac_RogueComboPointBarFrameMixin:UpdateRogueComboPointVisibility()
     local powerType = 4
     local maxComboPoints = getUnitPowerMax(unit, powerType)
     local rogueComboPointPool = self.RogueComboPointPool
+    local inCombat = UnitAffectingCombat(unit);
+    local hidden = Mac_RogueComboPointBarDB.hideOutOfCombat and not inCombat;
 
     for i = 1, #rogueComboPointPool do
-        if i  > maxComboPoints then
+        if hidden or i > maxComboPoints then
             rogueComboPointPool[i]:Hide()
         else
             rogueComboPointPool[i]:Show()
@@ -85,8 +87,11 @@ function Mac_RogueComboPointBarFrameMixin:OnLoad()
     self:SetScript("OnMouseDown", HandleMouseDown)
     self:RegisterEvent("UNIT_POWER_UPDATE")
     self:RegisterEvent("UNIT_MAXPOWER")
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    self:RegisterEvent("PLAYER_REGEN_DISABLED")
     self:CreateRogueComboPoint()
     self:UpdateSpacing()
+    self:UpdateRogueComboPointVisibility()
     self:UpdateRogueComboPoint()
 end
 
@@ -105,6 +110,10 @@ function Mac_RogueComboPointBarFrameMixin:OnEvent(event, ...)
             self:UpdateRogueComboPointVisibility()
             self:UpdateRogueComboPoint()
         end
+    end
+
+    if event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
+        self:UpdateRogueComboPointVisibility()
     end
 end
 
