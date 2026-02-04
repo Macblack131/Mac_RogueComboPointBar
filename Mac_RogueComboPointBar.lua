@@ -148,13 +148,27 @@ function Mac_RogueComboPointBarFrameMixin:UpdateRogueComboPoint()
 
     local color = Mac_RogueComboPointBarDB.color
     local backgroundColor = Mac_RogueComboPointBarDB.backgroundColor
-    local changedColor = Mac_RogueComboPointBarDB.changedColor
+    local changedColor1 = Mac_RogueComboPointBarDB.changedColor1
+    local changedColor2 = Mac_RogueComboPointBarDB.changedColor2
+    local comboPointsCap1 = Mac_RogueComboPointBarDB.comboPointsToChangeColor1
+    local comboPointsCap2 = Mac_RogueComboPointBarDB.comboPointsToChangeColor2
+
+    if Mac_RogueComboPointBarDB.shouldChangeColor1 and Mac_RogueComboPointBarDB.shouldChangeColor2 then
+        if Mac_RogueComboPointBarDB.comboPointsToChangeColor1 > Mac_RogueComboPointBarDB.comboPointsToChangeColor2 then
+            changedColor1, changedColor2 = changedColor2, changedColor1
+            comboPointsCap1, comboPointsCap2 = comboPointsCap2, comboPointsCap1
+        end
+    end
+
     for i = 1, #rogueComboPointPool do
         local rogueComboPoint = rogueComboPointPool[i]
+        
         if i > currentComboPoints then
             rogueComboPoint.Texture:SetColorTexture(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a)
-        elseif currentComboPoints >= Mac_RogueComboPointBarDB.comboPointsToChangeColor and Mac_RogueComboPointBarDB.chouldChangeColor == true then
-            rogueComboPoint.Texture:SetColorTexture(changedColor.r, changedColor.g, changedColor.b, changedColor.a)
+        elseif Mac_RogueComboPointBarDB.shouldChangeColor2 and currentComboPoints >= comboPointsCap2 then
+            rogueComboPoint.Texture:SetColorTexture(changedColor2.r, changedColor2.g, changedColor2.b, changedColor2.a)
+        elseif Mac_RogueComboPointBarDB.shouldChangeColor1 and currentComboPoints >= comboPointsCap1 then
+            rogueComboPoint.Texture:SetColorTexture(changedColor1.r, changedColor1.g, changedColor1.b, changedColor1.a)
         else
             rogueComboPoint.Texture:SetColorTexture(color.r, color.g, color.b, color.a)
         end

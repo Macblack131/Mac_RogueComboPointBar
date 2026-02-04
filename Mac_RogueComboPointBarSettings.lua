@@ -17,7 +17,13 @@ local DEFAULT_SETTINGS = {
         b = 0,
         a = 0.25
     },
-    changedColor = {
+    changedColor1 = {
+        r = 0.012,
+        g = 0.8,
+        b = 0.004,
+        a = 1,
+    },
+    changedColor2 = {
         r = 0.012,
         g = 0.8,
         b = 0.004,
@@ -32,8 +38,10 @@ local DEFAULT_SETTINGS = {
     },
     borderSize = 1,
     height = 20,
-    comboPointsToChangeColor = 5,
-    chouldChangeColor = true,
+    comboPointsToChangeColor1 = 5,
+    comboPointsToChangeColor2 = 5,
+    shouldChangeColor1 = true,
+    shouldChangeColor2 = true,
     xOffset = 0,
 }
 
@@ -330,9 +338,9 @@ local function CreateSettings()
     CreateHeader(layout, "Change color", nil, 0)
 
     do
-        local variable ="chouldChangeColor"
-        local variableKey = "chouldChangeColor"
-        local label = "Change combo points if combo points are greater than a specific value"
+        local variable = "shouldChangeColor1"
+        local variableKey = "shouldChangeColor1"
+        local label = "Use color override #1"
         local defaultValue = true
         local tooltip = nil
 
@@ -344,16 +352,16 @@ local function CreateSettings()
     end
 
     do
-        local label = "Changed color"
+        local label = "Color for override #1"
         local tooltip = nil
-        local variableKey = "changedColor"
+        local variableKey = "changedColor1"
         local defaultValue = {
             r = 0.012,
             g = 0.8,
             b = 0.004,
             a = 1,
         }
-        local variable ="changedColor"
+        local variable = "changedColor1"
 
         local function OnValueChanged()
             Mac_RogueComboPointBarFrame:UpdateRogueComboPointBorder()
@@ -364,15 +372,70 @@ local function CreateSettings()
 
     do
         local defaultValue = 5
-        local variableKey = "comboPointsToChangeColor"
-        local label = "Combo points to change color"
+        local variableKey = "comboPointsToChangeColor1"
+        local label = "Combo points for color override #1"
 
 		local function GetValue()
-			return Mac_RogueComboPointBarDB.comboPointsToChangeColor or defaultValue
+			return Mac_RogueComboPointBarDB.comboPointsToChangeColor1 or defaultValue
 		end
 
 		local function SetValue(value)
-			Mac_RogueComboPointBarDB.comboPointsToChangeColor = value
+			Mac_RogueComboPointBarDB.comboPointsToChangeColor1 = value
+            Mac_RogueComboPointBarFrame:UpdateRogueComboPoint()
+		end
+
+		local setting = Settings.RegisterProxySetting(category, variableKey, Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
+
+        local minValue, maxValue, step, buttonStep = 2, 7, 1, 1
+        local options = CreateSliderOptions(minValue, maxValue, step, buttonStep)
+		local tooltip = nil
+		CreateSlider(category, setting, options, tooltip)
+    end
+
+    do
+        local variable = "shouldChangeColor2"
+        local variableKey = "shouldChangeColor2"
+        local label = "Use color override #2"
+        local defaultValue = true
+        local tooltip = nil
+
+        local function OnValueChanged()
+            Mac_RogueComboPointBarFrame:UpdateRogueComboPointBorder()
+        end
+        
+        CreateCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, OnValueChanged) 
+    end
+
+    do
+        local label = "Color for override #2"
+        local tooltip = nil
+        local variableKey = "changedColor2"
+        local defaultValue = {
+            r = 0.012,
+            g = 0.8,
+            b = 0.004,
+            a = 1,
+        }
+        local variable = "changedColor2"
+
+        local function OnValueChanged()
+            Mac_RogueComboPointBarFrame:UpdateRogueComboPointBorder()
+        end
+
+        CreateColorPicker(category, layout, variable, variableKey, variableTbl, label, defaultValue, tooltip, OnValueChanged)
+    end
+
+    do
+        local defaultValue = 5
+        local variableKey = "comboPointsToChangeColor2"
+        local label = "Combo points for color override #2"
+
+		local function GetValue()
+			return Mac_RogueComboPointBarDB.comboPointsToChangeColor2 or defaultValue
+		end
+
+		local function SetValue(value)
+			Mac_RogueComboPointBarDB.comboPointsToChangeColor2 = value
             Mac_RogueComboPointBarFrame:UpdateRogueComboPoint()
 		end
 
