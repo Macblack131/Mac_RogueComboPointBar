@@ -3,6 +3,7 @@
 ## Author: Mac
 ## Version: 0.0.2
 ## SavedVariables: Mac_RogueComboPointBarDB
+## IconTexture: Interface\AddOns\Mac_RogueComboPointBar\icon.tga
 
 Mac_RogueComboPointBarSettings.lua
 Mac_RogueComboPointBar.xml
