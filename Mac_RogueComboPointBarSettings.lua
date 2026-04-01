@@ -428,7 +428,7 @@ local function CreateSettings()
         local variable = "shouldChangeColor2"
         local variableKey = "shouldChangeColor2"
         local label = "Use color override #2"
-        local defaultValue = true
+        local defaultValue = false
         local tooltip = nil
 
         local function OnValueChanged()
