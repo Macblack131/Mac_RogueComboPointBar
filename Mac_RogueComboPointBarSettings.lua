@@ -109,7 +109,12 @@ local function CreateSettings()
         local label = "Lock position"
         local defaultValue = false
         local tooltip = nil
-        CreateCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip) 
+
+        local function OnValueChanged()
+            Mac_RogueComboPointBarFrame:UpdateLock()
+        end
+
+        CreateCheckBox(category, variable, variableKey, variableTbl, label, defaultValue, tooltip, OnValueChanged) 
     end
 
     do
