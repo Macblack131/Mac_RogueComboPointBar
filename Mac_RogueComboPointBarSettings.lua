@@ -1,6 +1,7 @@
 local DEFAULT_SETTINGS = {
     isLock = false,
     hideOutOfCombat = false,
+    orientation = 1,
     color = {
         r = 0.776,
         g = 0.604,
@@ -127,6 +128,32 @@ local function CreateSettings()
     end
 
     CreateHeader(layout, "Combo point frame", nil, 0)
+
+    do
+        local function GetValue()
+            return Mac_RogueComboPointBarDB.orientation
+        end
+
+        local function SetValue(value)
+            Mac_RogueComboPointBarDB.orientation = value
+            Mac_RogueComboPointBarFrame:UpdateOrientation()
+        end
+
+        local function GetOptions()
+            local container = Settings.CreateControlTextContainer()
+            container:Add(1, "Horizontal")
+            container:Add(2, "Vertical")
+            return container:GetData()
+        end
+
+        local label = "Orientation"
+        local defaultValue = 1
+        local tooltip = "Frame orientation"
+
+        local setting = Settings.RegisterProxySetting(category, "ORIENTATION",
+        Settings.VarType.Number, label, defaultValue, GetValue, SetValue)
+        Settings.CreateDropdown(category, setting, GetOptions, tooltip)
+    end
 
     do
         local defaultValue = 0

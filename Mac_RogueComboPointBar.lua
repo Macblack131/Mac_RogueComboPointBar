@@ -16,6 +16,18 @@ end
 
 Mac_RogueComboPointBarFrameMixin = {}
 
+function Mac_RogueComboPointBarFrameMixin:UpdateOrientation()
+    if Mac_RogueComboPointBarDB.orientation == 1 then
+        Mixin(self, HorizontalLayoutMixin)
+        self.childLayoutDirection = "leftToRight"
+    else
+        Mixin(self, VerticalLayoutMixin)
+        self.childLayoutDirection = "bottomToTop"
+    end
+
+    self:Layout()
+end
+
 function Mac_RogueComboPointBarFrameMixin:UpdatePosition()
 	self:ClearAllPoints()
 
@@ -56,6 +68,7 @@ function Mac_RogueComboPointBarFrameMixin:UpdateRogueComboPointVisibility()
 end
 
 function Mac_RogueComboPointBarFrameMixin:OnLoad()
+    self:UpdateOrientation()
 	self:UpdatePosition()
 	self:SetScript("OnMouseUp", HandleMouseUp)
 	self:SetScript("OnMouseDown", HandleMouseDown)
