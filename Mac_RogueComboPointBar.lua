@@ -1,19 +1,3 @@
-local function HandleMouseUp(self)
-	self:StopMovingOrSizing()
-	self:SetMovable(false)
-
-	local xOffset, yOffset = self:GetCenter()
-	Settings.SetValue("positionX", xOffset - (GetScreenWidth() / 2))
-	Settings.SetValue("positionY", yOffset - (GetScreenHeight() / 2))
-end
-
-local function HandleMouseDown(self)
-	if Mac_RogueComboPointBarDB.isLock ~= true then
-		self:SetMovable(true)
-		self:StartMoving()
-	end
-end
-
 Mac_RogueComboPointBarFrameMixin = {}
 
 function Mac_RogueComboPointBarFrameMixin:UpdateOrientation()
@@ -69,9 +53,8 @@ end
 
 function Mac_RogueComboPointBarFrameMixin:OnLoad()
     self:UpdateOrientation()
+    self:UpdateLock()
 	self:UpdatePosition()
-	self:SetScript("OnMouseUp", HandleMouseUp)
-	self:SetScript("OnMouseDown", HandleMouseDown)
 	self:RegisterEvent("UNIT_POWER_UPDATE")
 	self:RegisterEvent("UNIT_MAXPOWER")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -165,6 +148,34 @@ function Mac_RogueComboPointBarFrameMixin:UpdateRogueComboPoint()
 			rogueComboPoint.Texture:SetColorTexture(color.r, color.g, color.b, color.a)
 		end
 	end
+end
+
+local function HandleMouseUp(self)
+	self:StopMovingOrSizing()
+	self:SetMovable(false)
+
+	local xOffset, yOffset = self:GetCenter()
+	Settings.SetValue("positionX", xOffset - (GetScreenWidth() / 2))
+	Settings.SetValue("positionY", yOffset - (GetScreenHeight() / 2))
+end
+
+local function HandleMouseDown(self)
+	if Mac_RogueComboPointBarDB.isLock ~= true then
+		self:SetMovable(true)
+		self:StartMoving()
+	end
+end
+
+function Mac_RogueComboPointBarFrameMixin:UpdateLock()
+    if Mac_RogueComboPointBarDB.isLock ~= true then
+        self:EnableMouse(true)
+        self:SetScript("OnMouseUp", HandleMouseUp)
+	    self:SetScript("OnMouseDown", HandleMouseDown)
+    else
+        self:EnableMouse(false)
+        self:SetScript("OnMouseUp", nil)
+	    self:SetScript("OnMouseDown", nil)
+    end
 end
 
 function Mac_RogueComboPointBarFrameMixin:ResetPosition()
