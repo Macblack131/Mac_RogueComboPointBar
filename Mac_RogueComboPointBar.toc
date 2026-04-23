@@ -1,9 +1,9 @@
-## Interface: 120001
+## Interface: 120005
 ## Title: Mac_RogueComboPointBar
 ## Author: Mac
-## Version: 0.0.2
+## Version: 0.0.3
 ## SavedVariables: Mac_RogueComboPointBarDB
-## IconTexture: Interface\AddOns\Mac_RogueComboPointBar\icon.tga
+## IconTexture: 626005
 
 Mac_RogueComboPointBarSettings.lua
 Mac_RogueComboPointBar.xml
