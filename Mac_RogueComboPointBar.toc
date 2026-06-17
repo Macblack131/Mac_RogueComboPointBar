@@ -1,7 +1,7 @@
-## Interface: 120005
+## Interface: 120007
 ## Title: Mac_RogueComboPointBar
 ## Author: Mac
-## Version: 0.0.3
+## Version: 0.0.4
 ## SavedVariables: Mac_RogueComboPointBarDB
 ## IconTexture: 626005
 
